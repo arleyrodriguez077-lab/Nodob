@@ -6,20 +6,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="feed" style="display:none;">
-    <div class="card">
-        <h3>Mi Perfil</h3>
-        <input type="file" id="fotoInput" accept="image/*">
-        <input type="text" id="nombreUsuario" placeholder="Tu nombre">
-        <textarea id="bioUsuario" placeholder="Tu biografía..."></textarea>
-        <button onclick="guardarPerfil()">Guardar Cambios</button>
-    </div>
-    <hr>
-    <textarea id="postContent" placeholder="¿Cómo te sientes en este Nodo?"></textarea>
-    <button onclick="publicar()">Publicar</button>
-    <div id="postsList"></div>
-    </div>
-    <div id="app">
+    <div id="app" style="text-align: center; padding: 20px;">
         <h1 style="color: #0288d1;">Nodo 🧠☁️</h1>
         
         <div id="auth-box">
@@ -30,26 +17,26 @@
         </div>
 
         <div id="feed" style="display:none;">
-            <div id="profile-section" class="card">
+            <div class="card">
                 <h3>Mi Perfil</h3>
-                <input type="text" id="nombreUsuario" placeholder="Nombre para mostrar">
-                <textarea id="bioUsuario" placeholder="Cuéntanos sobre ti..."></textarea>
-                <button onclick="actualizarPerfil()">Guardar Perfil</button>
+                <input type="file" id="fotoInput" accept="image/*">
+                <input type="text" id="nombreUsuario" placeholder="Tu nombre">
+                <textarea id="bioUsuario" placeholder="Tu biografía..."></textarea>
+                <button onclick="guardarPerfil()">Guardar Cambios</button>
             </div>
-            
             <hr>
-            
             <textarea id="postContent" placeholder="¿Cómo te sientes en este Nodo?"></textarea>
-            <button onclick="publicar()">Publicar en el Muro</button>
+            <button onclick="publicar()">Publicar</button>
+            <button onclick="auth.signOut(); location.reload();" style="background:gray;">Cerrar Sesión</button>
             <div id="postsList"></div>
         </div>
     </div>
+
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
     <script src="app.js"></script>
-    <button onclick="auth.signOut(); location.reload();" style="background:gray;">Cerrar Sesión</button>
-    
 </body>
-              </html>
-              
+</html>
+
