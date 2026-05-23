@@ -1,3 +1,4 @@
+// Configuración
 const firebaseConfig = {
   apiKey: "AIzaSyBj1byGK044xGVB_UlfG6CsvuWud6v-Sc8",
   authDomain: "nofo-b02b6.firebaseapp.com",
@@ -11,53 +12,46 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
+const storage = firebase.storage();
 
-// Guardar Perfil
-async function actualizarPerfil() {
+// Guardar Perfil con Foto
+async function guardarPerfil() {
     const user = auth.currentUser;
-    const nombre = document.getElementById('nombreUsuario').value;
-    const bio = document.getElementById('bioUsuario').value;
-    
+    const file = document.getElementById('fotoInput').files[0];
+    let fotoURL = "";
+
+    if (file) {
+        const ref = storage.ref('fotos/' + user.uid);
+        await ref.put(file);
+        fotoURL = await ref.getDownloadURL();
+    }
+
     await db.collection("usuarios").doc(user.uid).set({
-        nombre: nombre,
-        bio: bio
+        nombre: document.getElementById('nombreUsuario').value,
+        bio: document.getElementById('bioUsuario').value,
+        fotoURL: fotoURL
     }, { merge: true });
-    alert("Perfil actualizado en tu Nodo");
+    alert("Perfil guardado");
 }
 
-// Publicar Post con el nombre del usuario
-async function publicar() {
-    const texto = document.getElementById('postContent').value;
-    const user = auth.currentUser;
-    const userDoc = await db.collection("usuarios").doc(user.uid).get();
-    const nombre = userDoc.exists ? userDoc.data().nombre : "Usuario";
-
-    db.collection("posts").add({
-        contenido: texto,
-        nombre: nombre,
-        fecha: new Date(),
-        usuarioId: user.uid
-    });
-    document.getElementById('postContent').value = '';
-}
-
-// Cargar Muro
+// Cargar posts con foto de perfil
 function cargarPosts() {
-    db.collection("posts").orderBy("fecha", "desc").onSnapshot(snapshot => {
+    db.collection("posts").orderBy("fecha", "desc").onSnapshot(async snapshot => {
         const feed = document.getElementById('postsList');
         feed.innerHTML = '';
-        snapshot.forEach(doc => {
+        snapshot.forEach(async doc => {
             const p = doc.data();
+            // Buscar la foto del usuario en la colección 'usuarios'
+            const userDoc = await db.collection("usuarios").doc(p.usuarioId).get();
+            const userData = userDoc.data() || {};
+            
             feed.innerHTML += `
                 <div class="card">
-                    <h4>${p.nombre}</h4>
+                    <img src="${userData.fotoURL || 'default.png'}" style="width:40px; border-radius:50%;">
+                    <h4>${userData.nombre || 'Anónimo'}</h4>
                     <p>${p.contenido}</p>
                 </div>
             `;
         });
     });
 }
-
-function login() { /* ... igual que antes, llamando a cargarPosts() al final ... */ }
-function register() { /* ... igual que antes ... */ }
-      
