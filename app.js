@@ -1,4 +1,4 @@
-// Configuración
+// Configuración Real
 const firebaseConfig = {
   apiKey: "AIzaSyBj1byGK044xGVB_UlfG6CsvuWud6v-Sc8",
   authDomain: "nofo-b02b6.firebaseapp.com",
@@ -14,7 +14,7 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 const storage = firebase.storage();
 
-// Guardar Perfil con Foto
+// Función: Guardar Perfil con Foto
 async function guardarPerfil() {
     const user = auth.currentUser;
     const file = document.getElementById('fotoInput').files[0];
@@ -31,27 +31,29 @@ async function guardarPerfil() {
         bio: document.getElementById('bioUsuario').value,
         fotoURL: fotoURL
     }, { merge: true });
-    alert("Perfil guardado");
+    alert("Perfil de Nodo actualizado");
 }
 
-// Cargar posts con foto de perfil
+// Función: Cargar Muro
 function cargarPosts() {
-    db.collection("posts").orderBy("fecha", "desc").onSnapshot(async snapshot => {
+    db.collection("posts").orderBy("fecha", "desc").onSnapshot(snapshot => {
         const feed = document.getElementById('postsList');
         feed.innerHTML = '';
         snapshot.forEach(async doc => {
             const p = doc.data();
-            // Buscar la foto del usuario en la colección 'usuarios'
             const userDoc = await db.collection("usuarios").doc(p.usuarioId).get();
-            const userData = userDoc.data() || {};
+            const userData = userDoc.data() || { nombre: "Anónimo", fotoURL: "" };
             
             feed.innerHTML += `
-                <div class="card">
-                    <img src="${userData.fotoURL || 'default.png'}" style="width:40px; border-radius:50%;">
-                    <h4>${userData.nombre || 'Anónimo'}</h4>
-                    <p>${p.contenido}</p>
+                <div class="card" style="display:flex; align-items:center; gap:10px;">
+                    <img src="${userData.fotoURL}" style="width:50px; height:50px; border-radius:50%; background:#ccc;">
+                    <div>
+                        <strong>${userData.nombre}</strong>
+                        <p>${p.contenido}</p>
+                    </div>
                 </div>
             `;
         });
     });
 }
+
