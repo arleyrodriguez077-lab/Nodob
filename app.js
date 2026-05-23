@@ -1,3 +1,14 @@
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyAuIjC7DdZiNZu4uwvlme77Yia-pD1unJ8",
+  authDomain: "nodob-dc64a.firebaseapp.com",
+  projectId: "nodob-dc64a",
+  storageBucket: "nodob-dc64a.firebasestorage.app",
+  messagingSenderId: "1054231694015",
+  appId: "1:1054231694015:web:ec8afddf5cc1183e24140a",
+  measurementId: "G-44Q5WSWG9Y"
+};
+firebase.initializeApp(firebaseConfig);
 // Configuración Real
 const firebaseConfig = {
   apiKey: "AIzaSyBj1byGK044xGVB_UlfG6CsvuWud6v-Sc8",
