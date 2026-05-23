@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Nodo - Comunidad de Salud Mental</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <h1 style="color: #0288d1;">Nodo 🧠☁️</h1>
+        
+        <div id="auth-box">
+            <input type="email" id="email" placeholder="Correo">
+            <input type="password" id="password" placeholder="Contraseña">
+            <button onclick="login()">Ingresar</button>
+            <button onclick="register()">Registrarse</button>
+        </div>
+
+        <div id="feed" style="display:none;">
+            <div id="profile-section" class="card">
+                <h3>Mi Perfil</h3>
+                <input type="text" id="nombreUsuario" placeholder="Nombre para mostrar">
+                <textarea id="bioUsuario" placeholder="Cuéntanos sobre ti..."></textarea>
+                <button onclick="actualizarPerfil()">Guardar Perfil</button>
+            </div>
+            
+            <hr>
+            
+            <textarea id="postContent" placeholder="¿Cómo te sientes en este Nodo?"></textarea>
+            <button onclick="publicar()">Publicar en el Muro</button>
+            <div id="postsList"></div>
+        </div>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="app.js"></script>
+</body>
+              </html>
+              
