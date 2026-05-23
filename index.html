@@ -6,6 +6,19 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="feed" style="display:none;">
+    <div class="card">
+        <h3>Mi Perfil</h3>
+        <input type="file" id="fotoInput" accept="image/*">
+        <input type="text" id="nombreUsuario" placeholder="Tu nombre">
+        <textarea id="bioUsuario" placeholder="Tu biografía..."></textarea>
+        <button onclick="guardarPerfil()">Guardar Cambios</button>
+    </div>
+    <hr>
+    <textarea id="postContent" placeholder="¿Cómo te sientes en este Nodo?"></textarea>
+    <button onclick="publicar()">Publicar</button>
+    <div id="postsList"></div>
+    </div>
     <div id="app">
         <h1 style="color: #0288d1;">Nodo 🧠☁️</h1>
         
