@@ -1,29 +1,184 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comunidad Mental</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NODOB — Tu Comunidad</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
 </head>
 <body>
-    <div id="app">
-        <h1>Comunidad Abierta</h1>
-        <div id="auth-box">
-            <input type="email" id="email" placeholder="Correo">
-            <input type="password" id="password" placeholder="Contraseña">
-            <button onclick="login()">Ingresar</button>
-            <button onclick="register()">Registrarse</button>
-        </div>
-        <div id="feed" style="display:none;">
-            <textarea id="postContent" placeholder="Comparte cómo te sientes hoy..."></textarea>
-            <button onclick="publicar()">Publicar</button>
-            <div id="postsList"></div>
-        </div>
+
+  <!-- ══ TOAST ══════════════════════════════════════════ -->
+  <div id="toast"></div>
+
+  <!-- ══ AUTH SCREEN ════════════════════════════════════ -->
+  <div id="screen-auth" class="screen active">
+    <div class="auth-glow"></div>
+    <div class="auth-card fade-in">
+      <div class="auth-logo">
+        <span class="auth-logo-icon">◈</span>
+        <span class="auth-logo-text">NODOB</span>
+      </div>
+      <p class="auth-sub">Tu comunidad, tu espacio</p>
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Ingresar</button>
+        <button class="auth-tab" id="tab-register" onclick="switchTab('register')">Registro</button>
+      </div>
+      <div id="register-fields" style="display:none;">
+        <input class="auth-input" id="reg-username" placeholder="Nombre de usuario" />
+      </div>
+      <input class="auth-input" id="auth-email" type="email" placeholder="Correo electrónico" />
+      <input class="auth-input" id="auth-pass" type="password" placeholder="Contraseña" onkeydown="if(event.key==='Enter')handleAuth()" />
+      <button class="btn-primary auth-btn" id="auth-btn" onclick="handleAuth()">Entrar →</button>
+      <p class="auth-hint" id="auth-hint">
+        ¿No tienes cuenta? <span class="auth-link" onclick="switchTab('register')">Regístrate</span>
+      </p>
     </div>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="app.js"></script>
+  </div>
+
+  <!-- ══ APP (post-login) ═══════════════════════════════ -->
+  <div id="screen-app" class="screen" style="display:none;">
+
+    <!-- NAVBAR -->
+    <nav id="navbar">
+      <div class="nav-logo">◈ <span>NODOB</span></div>
+      <div class="nav-links">
+        <button class="nav-btn active" data-view="home" onclick="setView('home')">
+          <span class="nav-icon">⊞</span><span class="nav-label">Feed</span>
+        </button>
+        <button class="nav-btn" data-view="chat" onclick="setView('chat')">
+          <span class="nav-icon">◎</span><span class="nav-label">ChatLife</span>
+        </button>
+        <button class="nav-btn" data-view="album" onclick="setView('album')">
+          <span class="nav-icon">⊡</span><span class="nav-label">Álbum</span>
+        </button>
+        <button class="nav-btn" data-view="code" onclick="setView('code')">
+          <span class="nav-icon">⟨/⟩</span><span class="nav-label">Código</span>
+        </button>
+        <button class="nav-btn" data-view="profile" onclick="setView('profile')">
+          <span class="nav-icon">◉</span><span class="nav-label">Perfil</span>
+        </button>
+      </div>
+      <div class="nav-right">
+        <div class="nav-avatar" id="nav-avatar" onclick="setView('profile')"></div>
+        <button class="logout-btn" onclick="logout()" title="Cerrar sesión">⏻</button>
+      </div>
+    </nav>
+
+    <!-- VIEWS -->
+    <main id="main-content">
+
+      <!-- ── FEED ─────────────────────────────────────── -->
+      <div id="view-home" class="view active">
+        <div class="feed-inner">
+          <div class="card composer">
+            <div class="composer-top">
+              <div class="small-avatar" id="composer-avatar"></div>
+              <textarea class="composer-input" id="post-content" placeholder="¿Qué hay en tu mente?" rows="3" oninput="updateCharCount()"></textarea>
+            </div>
+            <div class="composer-foot">
+              <span class="char-count" id="char-count">0/500</span>
+              <button class="btn-primary" onclick="publishPost()">Publicar ✦</button>
+            </div>
+          </div>
+          <div class="filter-row">
+            <button class="filter-btn active" id="filter-all" onclick="filterPosts('all')">Todo el feed</button>
+            <button class="filter-btn" id="filter-mine" onclick="filterPosts('mine')">Mis posts</button>
+          </div>
+          <div id="posts-list"></div>
+        </div>
+      </div>
+
+      <!-- ── CHAT ──────────────────────────────────────── -->
+      <div id="view-chat" class="view" style="display:none;">
+        <div class="chat-wrap">
+          <div class="chat-header">
+            <span class="chat-dot"></span>
+            <span class="chat-title">ChatLife — Comunidad Abierta</span>
+            <span class="chat-online" id="chat-online">0 en línea</span>
+          </div>
+          <div class="chat-messages" id="chat-messages"></div>
+          <div class="chat-input-row">
+            <input class="chat-inp" id="chat-text" placeholder="Escribe un mensaje..." onkeydown="if(event.key==='Enter')sendMessage()" />
+            <button class="btn-primary chat-send" onclick="sendMessage()">↑</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── ALBUM ─────────────────────────────────────── -->
+      <div id="view-album" class="view feed-wrap" style="display:none;">
+        <div class="album-header">
+          <div>
+            <div class="section-title">Mi Álbum de Fotos</div>
+            <div class="album-sub" id="album-count">0/100 fotos</div>
+          </div>
+          <button class="btn-primary" onclick="document.getElementById('file-input').click()">+ Agregar fotos</button>
+          <input type="file" id="file-input" accept="image/*" multiple style="display:none" onchange="addPhotos(this.files)" />
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+        <div class="drop-zone" id="drop-zone"
+          ondragover="event.preventDefault();this.classList.add('active')"
+          ondragleave="this.classList.remove('active')"
+          ondrop="handleDrop(event)"
+          onclick="document.getElementById('file-input').click()">
+          Arrastra fotos aquí o haz clic para seleccionar
+        </div>
+        <div id="photo-grid" class="photo-grid"></div>
+        <!-- Lightbox -->
+        <div id="lightbox" class="lightbox" onclick="closeLightbox()" style="display:none;">
+          <div class="lightbox-inner" onclick="event.stopPropagation()">
+            <img id="lightbox-img" src="" alt="" class="lightbox-img" />
+            <div class="lightbox-foot">
+              <span id="lightbox-name" style="color:#ccc;font-size:13px;"></span>
+              <div style="display:flex;gap:8px;">
+                <button class="btn-secondary" onclick="closeLightbox()">Cerrar</button>
+                <button class="btn-danger" onclick="deleteCurrentPhoto()">Eliminar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CÓDIGO ─────────────────────────────────────── -->
+      <div id="view-code" class="view feed-wrap" style="display:none;">
+        <div class="card code-card">
+          <div class="code-header">
+            <div>
+              <div class="section-title">Código Fuente Firebase</div>
+              <div class="code-sub">Listo para copiar y pegar en tu proyecto</div>
+            </div>
+            <button class="copy-btn" id="copy-btn" onclick="copyCode()">⎘ Copiar código</button>
+          </div>
+          <div class="code-dots">
+            <span style="background:#FF5F57"></span>
+            <span style="background:#FEBC2E"></span>
+            <span style="background:#28C840"></span>
+          </div>
+          <pre id="code-block" class="code-pre"></pre>
+        </div>
+        <div class="card code-card" style="margin-top:16px;">
+          <div class="section-title">Tu Configuración Firebase</div>
+          <div id="config-grid" class="config-grid"></div>
+        </div>
+      </div>
+
+      <!-- ── PERFIL ─────────────────────────────────────── -->
+      <div id="view-profile" class="view feed-wrap" style="display:none;">
+        <div class="card profile-card">
+          <div class="profile-header">
+            <div class="profile-banner"></div>
+            <div class="profile-av-big" id="profile-av-big"></div>
+          </div>
+          <div class="profile-body" id="profile-body"></div>
+        </div>
+        <div id="my-posts-section" style="margin-top:24px;"></div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="app.js"></script>
 </body>
-</html>
+    </html>
+    
