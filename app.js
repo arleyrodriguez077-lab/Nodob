@@ -577,14 +577,41 @@ function copyCode() {
 }
 
 // ══════════════════════════════════════════════════
-//  PROFILE
+//  NODOB v2 — Corregido
 // ══════════════════════════════════════════════════
-function renderProfile(editing = false) {
+
+// ... (MANTÉN TODO TU CÓDIGO ANTERIOR HASTA LA LÍNEA 450) ...
+// (Todo lo anterior está bien, solo reemplaza desde la función renderProfile en adelante)
+
+function escapeHTML(str) {
+  return String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m]));
+}
+
+function renderProfile() {
+  const container = el('profile-body');
+  if (!currentUser) return;
+
   const posts = [...SAMPLE_POSTS, ...(store.get('posts') || [])].filter(p => p.uid === currentUser.email);
   const totalLikes = posts.reduce((acc, p) => acc + (p.likes?.length || 0), 0);
   const users = store.get('users') || {};
-  const communityCount = Object.keys(users).length;
-
-  const color  = avatarColor(currentUser.username);
+  
+  const color = avatarColor(currentUser.username);
   const letter = avatarLetter(currentUser.username);
-  const emoji  = currentUser
+
+  // Actualizar avatar grande
+  const avBig = el('profile-av-big');
+  avBig.style.background = color;
+  avBig.textContent = letter;
+
+  container.innerHTML = `
+    <div class="profile-name">${escapeHTML(currentUser.username)}</div>
+    <div class="profile-email">${escapeHTML(currentUser.email)}</div>
+    <div class="profile-bio">${escapeHTML(currentUser.bio || '¡Hola! Soy parte de la comunidad Nodob.')}</div>
+    <div class="profile-stats">
+      <div class="stat-item"><span class="stat-num">${posts.length}</span><span class="stat-lbl">Posts</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat-item"><span class="stat-num">${totalLikes}</span><span class="stat-lbl">Likes recibidos</span></div>
+    </div>
+  `;
+  }
+      
