@@ -63,5 +63,3 @@ function cargarPosts() {
             feed.innerHTML += `<div class="card"><strong>${userData.nombre}</strong><p>${p.contenido}</p></div>`;
         });
     });
-      }
-      
