@@ -2,40 +2,28 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Nodo - Comunidad de Salud Mental</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comunidad Mental</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="app" style="text-align: center; padding: 20px;">
-        <h1 style="color: #0288d1;">Nodo 🧠☁️</h1>
-        
+    <div id="app">
+        <h1>Comunidad Abierta</h1>
         <div id="auth-box">
             <input type="email" id="email" placeholder="Correo">
             <input type="password" id="password" placeholder="Contraseña">
             <button onclick="login()">Ingresar</button>
             <button onclick="register()">Registrarse</button>
         </div>
-
         <div id="feed" style="display:none;">
-            <div class="card">
-                <h3>Mi Perfil</h3>
-                <input type="file" id="fotoInput" accept="image/*">
-                <input type="text" id="nombreUsuario" placeholder="Tu nombre">
-                <textarea id="bioUsuario" placeholder="Tu biografía..."></textarea>
-                <button onclick="guardarPerfil()">Guardar Cambios</button>
-            </div>
-            <hr>
-            <textarea id="postContent" placeholder="¿Cómo te sientes en este Nodo?"></textarea>
+            <textarea id="postContent" placeholder="Comparte cómo te sientes hoy..."></textarea>
             <button onclick="publicar()">Publicar</button>
-            <button onclick="auth.signOut(); location.reload();" style="background:gray;">Cerrar Sesión</button>
             <div id="postsList"></div>
         </div>
     </div>
-
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
